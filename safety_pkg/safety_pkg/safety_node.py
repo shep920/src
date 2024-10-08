@@ -48,8 +48,18 @@ class SafetyNode(Node):
     def scan_callback(self, scan_msg):
         # Track the minimum iTTC
         min_ttc = float('inf')  # Initialize to a high value
+        range_threshold = 0.5  # Distance threshold (1 meter)
 
-        # Loop through each range in the LaserScan message
+        # Track the minimum range (distance to the nearest obstacle)
+        min_range = min(scan_msg.ranges)
+
+        # Brake if the car is closer than 1 meter to any obstacle
+        if min_range < range_threshold:
+            self.get_logger().info(f'Braking: Obstacle {min_range:.2f} meters away')
+            self.brake()
+            return  # Stop further processing since we're braking
+
+        # Loop through each range in the LaserScan message for iTTC calculation
         for i, range_val in enumerate(scan_msg.ranges):
             if np.isinf(range_val) or np.isnan(range_val):
                 continue  # Skip invalid range values
@@ -66,8 +76,15 @@ class SafetyNode(Node):
                 min_ttc = min(min_ttc, ttc)  # Track the minimum iTTC
 
         # Check if the minimum iTTC is below a threshold, brake if necessary
-        if min_ttc < 0.5:  # Example threshold for braking
+        if min_ttc < 0.5:  # Example threshold for braking based on iTTC
             self.brake()
+
+    def brake(self):
+        # Create an AckermannDriveStamped message to stop the car
+        brake_msg = AckermannDriveStamped()
+        brake_msg.drive.speed = 0.0
+        self.drive_publisher.publish(brake_msg)
+        self.get_logger().info('Emergency braking!')
 
     def brake(self):
         # Create an AckermannDriveStamped message to stop the car
