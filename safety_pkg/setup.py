@@ -20,7 +20,8 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'safety_node = safety_pkg.safety_node:main'
+            'safety_node = safety_pkg.safety_node:main',
+            'wall_follow = safety_pkg.wall_follow:main'
         ],
     },
 )
