@@ -24,29 +24,29 @@ class WallFollowNode(Node):
             10
         )
 
-        # PID controller gains
-        self.kp = 0.5
-        self.ki = 0.005
-        self.kd = 0.1
+        # PID controller gains (adjusted)
+        self.kp = 0.3
+        self.ki = 0.002
+        self.kd = 0.05
 
         self.integral = 0.0
         self.prev_error = 0.0
-        self.desired_distance = 1.0  # Desired distance from the wall (meters)
-        self.lookahead_distance = 1.0  # Lookahead distance L (meters)
-        self.tolerance = 0.05  # Tolerance for "going straight" (e.g., 5 cm)
+        self.desired_distance = 0.7  # Adjusted desired distance to 0.7 meters
+        self.lookahead_distance = 0.5  # Increased lookahead distance to 0.5 meters
+        self.tolerance = 0.1  # Increased tolerance to 10 cm
         self.integral_limit = 1.0  # Limit for integral windup
 
     def get_range(self, range_data, angle_deg):
         """ 
-        Get the LIDAR range at a specific angle in degrees.
+        Get the LIDAR range at a specific angle in degrees and filter out invalid data.
         """
         angle_rad = np.radians(angle_deg)
         index = int((angle_rad - range_data.angle_min) / range_data.angle_increment)
         if index < 0 or index >= len(range_data.ranges):
             return None  # Ensure index is within bounds
         range_at_angle = range_data.ranges[index]
-        if np.isinf(range_at_angle) or np.isnan(range_at_angle):
-            return None
+        if np.isinf(range_at_angle) or np.isnan(range_at_angle) or range_at_angle > 10:
+            return None  # Filter out invalid or large values (greater than 10m)
         return range_at_angle
 
     def calculate_alpha(self, a, b, theta_deg):
@@ -60,9 +60,7 @@ class WallFollowNode(Node):
             return 0.0
         
         alpha_rad = np.arctan((a * np.cos(theta_rad) - b) / (a * np.sin(theta_rad)))
-
-        return np.degrees(alpha_rad) + 45  # Return alpha in degrees
-
+        return np.degrees(alpha_rad)  # Return alpha in degrees (removed +45 offset)
 
     def calculate_distance(self, b, alpha_deg):
         """
@@ -77,6 +75,37 @@ class WallFollowNode(Node):
         """
         alpha_rad = np.radians(alpha_deg)
         return D_t + self.lookahead_distance * np.sin(alpha_rad)
+
+    def pid_control(self, error):
+        """
+        PID controller to compute the steering angle based on the error.
+        """
+        # Proportional term
+        P = self.kp * error
+        self.get_logger().info(f"Proportional (P): {P:.4f}")
+
+        # Integral term (with clamping to avoid windup)
+        self.integral += error
+        self.integral = max(min(self.integral, self.integral_limit), -self.integral_limit)  # Clamp the integral term
+        I = self.ki * self.integral
+        self.get_logger().info(f"Integral (I): {I:.4f}")
+
+        # Derivative term
+        D = self.kd * (error - self.prev_error)
+        self.get_logger().info(f"Derivative (D): {D:.4f}")
+
+        # Calculate the steering angle
+        steering_angle = P + I + D
+        self.prev_error = error
+
+        # Log the unclamped steering angle
+        self.get_logger().info(f"Unclamped steering angle: {steering_angle:.4f}")
+
+        # Limit the steering angle to a safe range (e.g., between -0.34 and 0.34 radians)
+        steering_angle = max(min(steering_angle, 0.34), -0.34)
+        self.get_logger().info(f"Clamped steering angle: {steering_angle:.4f}")
+
+        return steering_angle
 
     def scan_callback(self, msg):
         """
@@ -95,11 +124,16 @@ class WallFollowNode(Node):
             # Calculate the error as the difference between the desired distance and D_t+1
             error = self.desired_distance - D_t_1
 
-            # For now, we don't change the steering angle; we go straight.
-            steering_angle = 0.0  # Fixed steering angle (go straight)
+            # Use the PID controller to calculate the steering angle
+            steering_angle = self.pid_control(error)
 
-            # Adjust speed based on steering angle
-            velocity = 1.0  # Keep a fixed speed for straight driving
+            # Adjust speed based on the magnitude of the steering angle
+            if abs(steering_angle) < np.radians(10):
+                velocity = 1.5  # High speed for straight driving
+            elif abs(steering_angle) < np.radians(20):
+                velocity = 1.0  # Moderate speed for slight turns
+            else:
+                velocity = 0.5  # Slow speed for sharp turns
 
             # Publish the steering angle and speed
             drive_msg = AckermannDriveStamped()
