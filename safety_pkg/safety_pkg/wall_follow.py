@@ -24,17 +24,20 @@ class WallFollowNode(Node):
             10
         )
 
-        # PID controller gains (adjusted)
-        self.kp = 0.3
+        # PID controller gains (slightly reduced)
+        self.kp = 0.25
         self.ki = 0.002
-        self.kd = 0.05
+        self.kd = 0.03
 
         self.integral = 0.0
         self.prev_error = 0.0
-        self.desired_distance = 0.7  # Adjusted desired distance to 0.7 meters
-        self.lookahead_distance = 0.5  # Increased lookahead distance to 0.5 meters
-        self.tolerance = 0.1  # Increased tolerance to 10 cm
+        self.desired_distance = 0.7  # Desired distance from the wall
+        self.lookahead_distance = 0.5
+        self.tolerance = 0.1  # Tolerance for "going straight"
         self.integral_limit = 1.0  # Limit for integral windup
+
+        # Minimum distance to prevent getting too close to the wall
+        self.min_distance = 0.15  # 15 cm minimum distance to the wall
 
     def get_range(self, range_data, angle_deg):
         """ 
@@ -60,7 +63,7 @@ class WallFollowNode(Node):
             return 0.0
         
         alpha_rad = np.arctan((a * np.cos(theta_rad) - b) / (a * np.sin(theta_rad)))
-        return np.degrees(alpha_rad)  # Return alpha in degrees (removed +45 offset)
+        return np.degrees(alpha_rad)
 
     def calculate_distance(self, b, alpha_deg):
         """
@@ -124,16 +127,23 @@ class WallFollowNode(Node):
             # Calculate the error as the difference between the desired distance and D_t+1
             error = self.desired_distance - D_t_1
 
-            # Use the PID controller to calculate the steering angle
-            steering_angle = self.pid_control(error)
-
-            # Adjust speed based on the magnitude of the steering angle
-            if abs(steering_angle) < np.radians(10):
-                velocity = 1.5  # High speed for straight driving
-            elif abs(steering_angle) < np.radians(20):
-                velocity = 1.0  # Moderate speed for slight turns
+            # Add a minimum distance check to prevent getting too close to the wall
+            if D_t < self.min_distance:
+                # Back up if the car is too close to the wall
+                self.get_logger().warn("Too close to the wall! Backing up.")
+                steering_angle = 0.0  # Go straight while backing up
+                velocity = -0.5  # Slow reverse speed
             else:
-                velocity = 0.5  # Slow speed for sharp turns
+                # Use the PID controller to calculate the steering angle
+                steering_angle = self.pid_control(error)
+
+                # Adjust speed based on the magnitude of the steering angle
+                if abs(steering_angle) < np.radians(10):
+                    velocity = 1.5  # High speed for straight driving
+                elif abs(steering_angle) < np.radians(20):
+                    velocity = 1.0  # Moderate speed for slight turns
+                else:
+                    velocity = 0.5  # Slow speed for sharp turns
 
             # Publish the steering angle and speed
             drive_msg = AckermannDriveStamped()
