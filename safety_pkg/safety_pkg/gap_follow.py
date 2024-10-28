@@ -20,7 +20,7 @@ class FollowTheGap(Node):
             '/drive',
             10
         )
-        self.safety_radius = 0.5  # Safety bubble radius (meters)
+        self.safety_radius = 0.3  # Safety bubble radius (meters)
         self.straight_speed = 1.5
         self.turn_speed = 0.5
         self.max_steering_angle = 0.34  # Max steering angle (radians)
@@ -28,29 +28,31 @@ class FollowTheGap(Node):
     def scan_callback(self, msg):
         # Step 1: Preprocess laser scan data
         ranges = np.array(msg.ranges)
-        ranges = np.where((ranges == 0) | (ranges > msg.range_max), np.inf, ranges)
+        # Set invalid ranges to np.nan
+        ranges = np.where((ranges == 0) | (ranges > msg.range_max), np.nan, ranges)
 
         # Step 2: Find the closest point
-        closest_idx = np.argmin(ranges)
+        closest_idx = np.nanargmin(ranges)
         closest_dist = ranges[closest_idx]
         self.get_logger().info(f"Closest distance: {closest_dist:.2f} meters")
 
         # Step 3: Apply a safety bubble
-        bubble_radius = int(np.degrees(self.safety_radius / msg.angle_increment))
+        bubble_radius = int(self.safety_radius / msg.angle_increment)
         start_idx = max(0, closest_idx - bubble_radius)
         end_idx = min(len(ranges), closest_idx + bubble_radius)
-        ranges[start_idx:end_idx] = np.inf  # Set ranges within the bubble to inf
+        ranges[start_idx:end_idx] = np.nan  # Set ranges within the bubble to nan
 
         # Step 4: Find the largest gap
         gaps = self.find_gaps(ranges)
         if not gaps:
-            self.get_logger().warn("No gaps found!")
-            self.publish_drive_command(0.0, 0.0)
+            self.get_logger().warn("No gaps found! Slowing down.")
+            self.publish_drive_command(0.0, 0.1)  # Move slowly if no gaps found
             return
 
         # Step 5: Find the best point in the largest gap
         largest_gap = max(gaps, key=lambda x: x[1] - x[0])
-        best_idx = (largest_gap[0] + largest_gap[1]) // 2
+        gap_ranges = ranges[largest_gap[0]:largest_gap[1]+1]
+        best_idx = largest_gap[0] + np.nanargmax(gap_ranges)
         goal_angle = msg.angle_min + best_idx * msg.angle_increment
 
         # Step 6: Drive towards the goal point
@@ -61,15 +63,22 @@ class FollowTheGap(Node):
     def find_gaps(self, ranges):
         """
         Finds and returns a list of gaps as tuples of (start_idx, end_idx).
+        Gaps are sequences where ranges are finite numbers (i.e., not obstacles).
         """
         gaps = []
-        start_idx = None
-        for i in range(1, len(ranges)):
-            if np.isfinite(ranges[i]) and not np.isfinite(ranges[i - 1]):
-                start_idx = i
-            elif not np.isfinite(ranges[i]) and np.isfinite(ranges[i - 1]) and start_idx is not None:
-                gaps.append((start_idx, i))
-                start_idx = None
+        in_gap = False
+        for i in range(len(ranges)):
+            if np.isfinite(ranges[i]):
+                if not in_gap:
+                    start_idx = i
+                    in_gap = True
+            else:
+                if in_gap:
+                    end_idx = i - 1
+                    gaps.append((start_idx, end_idx))
+                    in_gap = False
+        if in_gap:
+            gaps.append((start_idx, len(ranges) - 1))
         return gaps
 
     def publish_drive_command(self, steering_angle, speed):
