@@ -22,7 +22,8 @@ setup(
         'console_scripts': [
             'safety_node = safety_pkg.safety_node:main',
             'wall_follow = safety_pkg.wall_follow:main',
-            'gap_follow = safety_pkg.gap_follow:main'
+            'gap_follow = safety_pkg.gap_follow:main',
+            'pure_pursuit = safety_pkg.pure_pursuit:main'
 
         ],
     },
