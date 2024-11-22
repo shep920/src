@@ -1,0 +1,46 @@
+running egg_info
+creating ../build/safety_pkg/safety_pkg.egg-info
+writing ../build/safety_pkg/safety_pkg.egg-info/PKG-INFO
+writing dependency_links to ../build/safety_pkg/safety_pkg.egg-info/dependency_links.txt
+writing entry points to ../build/safety_pkg/safety_pkg.egg-info/entry_points.txt
+writing requirements to ../build/safety_pkg/safety_pkg.egg-info/requires.txt
+writing top-level names to ../build/safety_pkg/safety_pkg.egg-info/top_level.txt
+writing manifest file '../build/safety_pkg/safety_pkg.egg-info/SOURCES.txt'
+reading manifest file '../build/safety_pkg/safety_pkg.egg-info/SOURCES.txt'
+writing manifest file '../build/safety_pkg/safety_pkg.egg-info/SOURCES.txt'
+running build
+running build_py
+creating /home/changeme/lab2_ws/src/build/safety_pkg/build
+creating /home/changeme/lab2_ws/src/build/safety_pkg/build/lib
+creating /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg
+copying safety_pkg/pure_pursuit.py -> /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg
+copying safety_pkg/__init__.py -> /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg
+copying safety_pkg/wall_follow.py -> /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg
+copying safety_pkg/safety_node.py -> /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg
+copying safety_pkg/gap_follow.py -> /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg
+running install
+running install_lib
+creating /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg
+copying /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg/pure_pursuit.py -> /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg
+copying /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg/__init__.py -> /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg
+copying /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg/wall_follow.py -> /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg
+copying /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg/safety_node.py -> /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg
+copying /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg/gap_follow.py -> /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg
+byte-compiling /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg/pure_pursuit.py to pure_pursuit.cpython-38.pyc
+byte-compiling /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg/__init__.py to __init__.cpython-38.pyc
+byte-compiling /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg/wall_follow.py to wall_follow.cpython-38.pyc
+byte-compiling /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg/safety_node.py to safety_node.cpython-38.pyc
+byte-compiling /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg/gap_follow.py to gap_follow.cpython-38.pyc
+running install_data
+creating /home/changeme/lab2_ws/src/install/safety_pkg/share/ament_index
+creating /home/changeme/lab2_ws/src/install/safety_pkg/share/ament_index/resource_index
+creating /home/changeme/lab2_ws/src/install/safety_pkg/share/ament_index/resource_index/packages
+copying resource/safety_pkg -> /home/changeme/lab2_ws/src/install/safety_pkg/share/ament_index/resource_index/packages
+copying package.xml -> /home/changeme/lab2_ws/src/install/safety_pkg/share/safety_pkg
+running install_egg_info
+Copying ../build/safety_pkg/safety_pkg.egg-info to /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg-0.0.0-py3.8.egg-info
+running install_scripts
+Installing gap_follow script to /home/changeme/lab2_ws/src/install/safety_pkg/lib/safety_pkg
+Installing safety_node script to /home/changeme/lab2_ws/src/install/safety_pkg/lib/safety_pkg
+Installing wall_follow script to /home/changeme/lab2_ws/src/install/safety_pkg/lib/safety_pkg
+writing list of installed files to '/home/changeme/lab2_ws/src/build/safety_pkg/install.log'

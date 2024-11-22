@@ -1,0 +1,26 @@
+[0.586s] Invoking command in '/home/changeme/lab2_ws/src/safety_pkg': PYTHONPATH=/home/changeme/lab2_ws/src/build/safety_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../build/safety_pkg build --build-base /home/changeme/lab2_ws/src/build/safety_pkg/build install --record /home/changeme/lab2_ws/src/build/safety_pkg/install.log --install-scripts $base/lib/safety_pkg --single-version-externally-managed install_data
+[0.776s] running egg_info
+[0.783s] writing ../build/safety_pkg/safety_pkg.egg-info/PKG-INFO
+[0.783s] writing dependency_links to ../build/safety_pkg/safety_pkg.egg-info/dependency_links.txt
+[0.784s] writing entry points to ../build/safety_pkg/safety_pkg.egg-info/entry_points.txt
+[0.784s] writing requirements to ../build/safety_pkg/safety_pkg.egg-info/requires.txt
+[0.784s] writing top-level names to ../build/safety_pkg/safety_pkg.egg-info/top_level.txt
+[0.812s] reading manifest file '../build/safety_pkg/safety_pkg.egg-info/SOURCES.txt'
+[0.816s] writing manifest file '../build/safety_pkg/safety_pkg.egg-info/SOURCES.txt'
+[0.817s] running build
+[0.817s] running build_py
+[0.817s] copying safety_pkg/pure_pursuit.py -> /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg
+[0.818s] running install
+[0.818s] running install_lib
+[0.819s] copying /home/changeme/lab2_ws/src/build/safety_pkg/build/lib/safety_pkg/pure_pursuit.py -> /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg
+[0.820s] byte-compiling /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg/pure_pursuit.py to pure_pursuit.cpython-38.pyc
+[0.823s] running install_data
+[0.823s] running install_egg_info
+[0.824s] removing '/home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg-0.0.0-py3.8.egg-info' (and everything under it)
+[0.825s] Copying ../build/safety_pkg/safety_pkg.egg-info to /home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages/safety_pkg-0.0.0-py3.8.egg-info
+[0.827s] running install_scripts
+[0.844s] Installing gap_follow script to /home/changeme/lab2_ws/src/install/safety_pkg/lib/safety_pkg
+[0.844s] Installing safety_node script to /home/changeme/lab2_ws/src/install/safety_pkg/lib/safety_pkg
+[0.844s] Installing wall_follow script to /home/changeme/lab2_ws/src/install/safety_pkg/lib/safety_pkg
+[0.846s] writing list of installed files to '/home/changeme/lab2_ws/src/build/safety_pkg/install.log'
+[0.866s] Invoked command in '/home/changeme/lab2_ws/src/safety_pkg' returned '0': PYTHONPATH=/home/changeme/lab2_ws/src/build/safety_pkg/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/changeme/lab2_ws/src/install/safety_pkg/lib/python3.8/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../build/safety_pkg build --build-base /home/changeme/lab2_ws/src/build/safety_pkg/build install --record /home/changeme/lab2_ws/src/build/safety_pkg/install.log --install-scripts $base/lib/safety_pkg --single-version-externally-managed install_data
